@@ -1,0 +1,69 @@
+"use client"
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+
+const ProductDetails = () => {
+  var productId = 14597;
+  const [product, setProduct] = useState(null);
+  const [selectedVariation, setSelectedVariation] = useState(null);
+  const [selectedVariations, setSelectedVariations] = useState({});
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+
+
+
+      try {
+        const response = await axios.get(`http://localhost/pos/wp-json/wc/v1/products/${productId}`, {
+          auth: {
+            username: 'ck_5e371a1274c6e40c395bf5418489e6afdc5f447f',
+            password: 'cs_48f7627d826cd209f345f05c3d40f96d4a2d76fa'
+          }
+        });
+        setProduct(response.data);
+      } catch (error) {
+        console.error('Error fetching product:', error);
+      }
+
+      
+    };
+
+    fetchProduct();
+  }, [productId]);
+
+
+  console.log(product);
+  const handleVariationChange = (variationId) => {
+    console.log(variationId);
+    const variation = product.variations.find(prod => prod.id === variationId);
+    setSelectedVariation(variation);
+  };
+
+  if (!product) return <div>Loading...</div>;
+
+  return (
+    <div>
+      <h2>{product.name}</h2>
+      <div>
+        {product.attributes.map(attr => (
+          <div key={attr.id}>
+            <label>{attr.name}:</label>
+            <select onChange={(e) => handleVariationChange(14598)}>
+              {attr.options.map(option => (
+                <option key={option} value={option}>{option}</option>
+              ))}
+            </select>
+          </div>
+        ))}
+      </div>
+      {selectedVariation && (
+        <div>
+          <h3>{selectedVariation.price}</h3>
+          <p>{selectedVariation.description}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default ProductDetails;

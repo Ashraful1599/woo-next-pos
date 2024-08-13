@@ -1,0 +1,128 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+  padding-top: 1rem;
+}
+.page-item {
+  margin: 0 0.25rem;
+  display: flex;
+}
+.page-link {
+  padding: 3px 10px;
+  border: 1px solid #dddddd;
+  color: #007bff;
+  cursor: pointer;
+}
+.page-link:hover {
+  background-color: #eeeeee;
+}
+.active .page-link {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+.products_list_wrap{
+  height: calc(100vh - 56px) !important;
+}
+.orders_list_wrap{
+  height: calc(100vh - 96px) !important;
+}
+.products_list {
+  height: calc(100% - 48px);
+}
+.page-item.disabled{
+  pointer-events: none;
+  background-color: #eeeeee;
+}
+
+.avatar {
+  display: inline-block;
+  border-radius: 50%;
+  overflow: hidden;
+}
+header{
+  min-height: 56px;
+}
+.hold_cart svg{
+  transform: rotate(90deg);
+}
+.header_icons div{
+  cursor: pointer;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.spinner svg {
+  animation: spin 1s linear infinite;
+}
+.customer_lists{
+  height: calc(100% - 48px);
+}
+.customer_lists ul li, .products_list ul li{
+  background-color: lightgray;
+  padding: 5px 15px;
+}
+.cart_items li{
+  list-style-type: none;
+  background-color: #f3f4f6;
+  padding: 10px;
+  border-radius: 5px;
+}
+.price_quantity_update input{
+  border: 1px solid #ddd;
+  padding: 5px;
+  border-radius: 5px;
+}
+.cart_item_name{
+  cursor: pointer;
+}
+main{
+  height: calc(100vh - 56px);
+  overflow: hidden;
+}
+main nav{
+  height: calc(100vh - 56px);
+  overflow: hidden;
+}
+.cart_item_remove{
+    position: absolute;
+    right: 7px;
+    top: 14px;
+}
