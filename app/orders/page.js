@@ -1,10 +1,10 @@
 // pages/orders.js
 'use client';
 
-import React, { useEffect, useState, Suspense } from 'react';
+import React, { useEffect, useState, Suspense, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setHoldCartItems } from '@/lib/slices/cartSlice';
-import OrderList from "@/components/ProductList";
+import OrderList from "@/components/OrderList";
 import Cart from "@/components/Cart";
 import { fetchAndSaveProducts, fetchAndSaveCategories } from "@/lib/dataService";
 import Header from "@/components/Header";
@@ -16,7 +16,7 @@ import { getCarts } from '@/lib/db';
 import { fetchHoldCartItems, retrieveCart, deleteCart } from '@/lib/slices/holdCartSlice';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { deleteHeldCart } from '@/lib/db';
-import { fetchProducts } from '@/lib/slices/productsSlice';
+import { fetchOrders } from '@/lib/slices/ordersSlice';
 
 // Split Orders component
 function OrdersComponent() {
@@ -31,42 +31,52 @@ function OrdersComponent() {
   const itemsPerPage = 12;
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { items } = useSelector((state) => state.products);
+  const { items } = useSelector((state) => state.orders);
+
+
+  useEffect(() => {
+    setProducts(items);
+  }, [items]);
 
   useEffect(() => {
     dispatch(fetchHoldCartItems());
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(setHoldCartItems(heldCart));
-  }, [heldCart, dispatch]);
+    if (heldCart && Object.keys(heldCart).length > 0) {
+        console.log('heldCart', heldCart);
+        dispatch(setHoldCartItems(heldCart));
+    }
+}, [heldCart, dispatch]);
 
   useEffect(() => {
     setHoldCarts(holdCartItems);
   }, [holdCartItems]);
 
   useEffect(() => {
-    dispatch(fetchProducts(dispatch));
+    dispatch(fetchOrders(dispatch));
   }, [dispatch]);
 
-  useEffect(() => {
-    setProducts(items);
-  }, [items]);
+
 
   const handlePageClick = (event) => {
+    //console.log(event.selected)
     setCurrentPage(event.selected);
   };
 
   const handleClearCart = () => {
     dispatch(clearCart());
   };
-
+  console.log('currentPage',currentPage);
   const offset = currentPage * itemsPerPage;
   const currentPageItems = products?.slice(offset, offset + itemsPerPage);
 
-  const handleSearch = () => {
-    setCurrentPage(0);
-  };
+  console.log('products',products);
+  console.log('currentPageItems', currentPageItems);
+
+  const handleSearch = useCallback(() => {
+    setCurrentPage(0); // Reset to first page
+  }, []);
 
   useEffect(() => {
     if (!loading) {
@@ -112,7 +122,7 @@ function OrdersComponent() {
   return (
     <div>
       <Header 
-        searchField={true}
+        searchField={false}
         products={products}
         setProducts={setProducts}
         onSearch={handleSearch}

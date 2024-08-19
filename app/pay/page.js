@@ -10,6 +10,7 @@ import ResetButton from "@/components/ResetButton";
 import { useSelector, useDispatch } from "react-redux";
 import db from "@/lib/db";
 import Link from "next/link";
+
 import {
   fetchAndSaveProducts,
   fetchAndSaveCustomers,
@@ -35,6 +36,7 @@ import {
   setLoyaltyPoints,
 } from "@/lib/slices/cartSlice";
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import { addOrderToDB } from '@/lib/slices/ordersSlice';
 
 export default function Home() {
   const cartItems = useSelector((state) => state.cart.items);
@@ -167,6 +169,10 @@ export default function Home() {
 
    // Assuming 'response' contains order details
    const { id, date, tax_lines,line_items, total, billing } = response.data;
+
+    dispatch(addOrderToDB(response.data));
+
+
    console.log(response);
 
    // Generate invoice data

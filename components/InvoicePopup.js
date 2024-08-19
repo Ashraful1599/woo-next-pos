@@ -15,7 +15,7 @@ const InvoicePopup = ({ isOpen, onClose, invoiceData }) => {
     const doc = iframe.contentDocument || iframe.contentWindow.document;
 
     doc.open();
-    doc.write('<html><head><title>Invoice</title>');
+    doc.write('<html><head><title></title>');
     doc.write(`
       <style>
         body {
@@ -25,6 +25,9 @@ const InvoicePopup = ({ isOpen, onClose, invoiceData }) => {
           width: 72mm;
           max-width: 72mm;
           margin: 0 auto;
+        }
+        title{
+          text-align: right;
         }
         .invoice {
           width: 100%;

@@ -18,6 +18,7 @@ const ProductList = ({products}) => {
       setSelectedOptions({});
       setSelectedVariation(null);
     } else {
+
       dispatch(addItemToCart({...product , quantity: 1}));
     }
   };
@@ -37,15 +38,18 @@ const ProductList = ({products}) => {
 
   const handleAddVariantToCart = () => {
     if (selectedVariation) {
+    //  console.log('selectedVariation',selectedVariation);
       const variantOptionNames = selectedVariation.attributes
         ? selectedVariation.attributes.map(attr => `${attr.name}: ${attr.option}`).join(', ')
         : '';
   
       const variantProduct = {
         ...selectedProduct,
+        id: selectedVariation.id,
         price: selectedVariation.price,  // Use the price from selected variation
         variantOptions: variantOptionNames,
       };
+      console.log('variantProduct', variantProduct);
 
       dispatch(addItemToCart({...variantProduct , quantity: 1}));
       setSelectedProduct(null);

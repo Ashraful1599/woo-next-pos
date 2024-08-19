@@ -71,9 +71,9 @@ const handleLogout = async (e) => {
         </li>
       
         
-        <li className="py-2">
+        {/* <li className="py-2">
         <Link href={"/pay"}>Pay</Link>
-        </li>        
+        </li>         */}
         <li className="py-2">
           <Link href={"/logout"} onClick={handleLogout}>Logout</Link>
         </li>

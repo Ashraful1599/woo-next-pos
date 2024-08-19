@@ -35,8 +35,12 @@ const Header = ({ products, setProducts, searchField, onSearch, searchCustomers 
 
   
         const results = originalProducts.current.filter(product =>{
-          if(searchCustomers){
-            return product.email.toLowerCase().includes(searchQuery.toLowerCase())
+          if (searchCustomers) {
+            const fullName = `${product.billing?.first_name || ''} ${product.billing?.last_name || ''}`.toLowerCase();
+            
+            return (
+              product.email.toLowerCase().includes(searchQuery.toLowerCase()) || fullName.includes(searchQuery.toLowerCase())
+            );
           }else{
            return product.name.toLowerCase().includes(searchQuery.toLowerCase())
           }
@@ -50,10 +54,14 @@ const Header = ({ products, setProducts, searchField, onSearch, searchCustomers 
       onSearch(); // Call the onSearch function passed from parent
     }
   }
-  }, [searchQuery, setProducts, onSearch, searchCustomers]);
+  }, [searchQuery, setProducts, searchCustomers]);
+
+
+
+  
 
   // Handle search input changes
-  const handleSearch = (event) => {
+  const handleOnSearch = (event) => {
     setSearchQuery(event.target.value);
   };
 
@@ -100,7 +108,7 @@ const Header = ({ products, setProducts, searchField, onSearch, searchCustomers 
         </h3>
         {
           searchField &&  <input
-          onChange={handleSearch}
+          onChange={handleOnSearch}
           className="col-span-3 px-4 py-2 w-full"
           type="text"
           placeholder={searchCustomers? "Customer serarch...": "Product search..."}

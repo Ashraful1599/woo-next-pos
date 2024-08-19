@@ -50,7 +50,7 @@ export default function LoginPage() {
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-sm p-8 space-y-8 bg-white shadow-lg rounded-lg">
         <div className="flex justify-center">
-          <Image src={logo.src} alt="Nutrizone Supplements" className="h-16" />
+          <Image width={logo.width} height={logo.height} src={logo.src} alt="Nutrizone Supplements" className="h-16 object-contain" />
         </div>
         <h2 className="text-2xl font-bold text-center">LOGIN TO YOUR ACCOUNT</h2>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>

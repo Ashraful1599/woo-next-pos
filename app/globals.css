@@ -60,7 +60,7 @@ body {
   height: calc(100vh - 56px) !important;
 }
 .orders_list_wrap{
-  height: calc(100vh - 96px) !important;
+  height: calc(100vh - 130px) !important;
 }
 .products_list {
   height: calc(100% - 48px);
@@ -125,4 +125,11 @@ main nav{
     position: absolute;
     right: 7px;
     top: 14px;
+}
+
+.variantoptions{
+  font-size: 12px;
+}
+.cart_item_remove {
+  top: calc(50% - 9px);
 }

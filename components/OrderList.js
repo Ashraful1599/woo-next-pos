@@ -56,12 +56,11 @@ const ProductList = ({products}) => {
 
   return (
     <div className="products_list overflow-auto">
-      <h2 className="text-lg font-bold mb-2">Products</h2>
+      <h2 className="text-lg font-bold mb-2">Orders</h2>
       <ul className="space-y-2 grid grid-cols-3 gap-2 overflow-auto">
         {products.map((product) => (
           <li key={product.id} className="flex gap-4 flex-col">
-            <span>{product.name} - ${product.price}</span>
-            <button className="bg-blue-500 text-white px-2 py-1 rounded" onClick={() => handleAddToCart(product)}>Add to Cart</button>
+             <span>#{product.id} - {product.billing.first_name} {product.billing.last_name}</span>
           </li>
         ))}
       </ul>

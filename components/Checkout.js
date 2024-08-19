@@ -203,7 +203,7 @@ const Checkout = ({ placeOrder, customer }) => {
               <span>
                 {item.name} - ${Number(item.price).toFixed(2)} (x{item.quantity})
                 {item.variantOptions && (
-                  <div className="text-sm text-gray-500">
+                  <div className="text-sm text-gray-500 variantoptions">
                     {item.variantOptions}
                   </div>
                 )}

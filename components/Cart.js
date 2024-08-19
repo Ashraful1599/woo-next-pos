@@ -36,6 +36,19 @@ const Cart = ({ placeOrder, customer }) => {
   const cart = useSelector((state) => state.cart);
   const [heldCartId, setHeldCartId] = useState(null);
   const { heldCart } = useSelector((state) => state.holdCart);
+  const [editingItems, setEditingItems] = useState({});
+
+
+  const handleInputChange = (e, item, field) => {
+    const updatedItems = {
+      ...editingItems,
+      [item.id]: {
+        ...editingItems[item.id],
+        [field]: e.target.value,
+      }
+    };
+    setEditingItems(updatedItems);
+  };
 
 
   useEffect(() => {
@@ -124,7 +137,7 @@ const Cart = ({ placeOrder, customer }) => {
       await dispatch(retrieveCart(heldCartId));
     }
   };
-
+ 
 
   return (
     <div className="bg-white p-4 rounded shadow-lg col-span-2 flex flex-col">
@@ -169,10 +182,14 @@ const Cart = ({ placeOrder, customer }) => {
               onClick={() => handleToggleItem(item.id)}
               aria-expanded={togglePopup.toggledItemId === item.id}
             >
-              <span>
+                      <span>
                 {item.name} - ${Number(item.price).toFixed(2)} (x{item.quantity})
+                {item.variantOptions && (
+                  <div className="text-sm text-gray-500 variantoptions">
+                    {item.variantOptions}
+                  </div>
+                )}
               </span>
-
             </div>
 
             <button
@@ -185,13 +202,14 @@ const Cart = ({ placeOrder, customer }) => {
 
             <div className={`overflow-hidden transition-all duration-300 ${toggledItemId === item.id ? "max-h-40" : "max-h-0"}`}>
               <div className="py-2 grid grid-cols-2 gap-2 price_quantity_update">
-                <input
-                  name="item_quantity"
-                  className="col-span-1"
-                  placeholder="Enter quantity"
-                  defaultValue={item.quantity}
-                  onKeyDown={(e) => handleKeyDown(e, item, "quantity")}
-                />
+              <input
+                name="item_quantity"
+                className="col-span-1"
+                placeholder="Enter quantity"
+                value={editingItems[item.id]?.quantity || item.quantity}
+                onChange={(e) => handleInputChange(e, item, 'quantity')}
+                onKeyDown={(e) => handleKeyDown(e, item, "quantity")}
+              />
                 <input
                   name="item_price"
                   className="col-span-1"

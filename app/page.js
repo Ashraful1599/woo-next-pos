@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProducts } from '@/lib/slices/productsSlice';
 import ProductList from "@/components/ProductList";
@@ -18,7 +18,7 @@ export default function Home() {
   const cartItems = useSelector((state) => state.cart.items);
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
-  const itemsPerPage = 10; // Define the number of items per page
+  const itemsPerPage = 12; // Define the number of items per page
 
 
   useEffect(() => {
@@ -40,9 +40,9 @@ export default function Home() {
   const offset = currentPage * itemsPerPage;
   const currentPageItems = products.slice(offset, offset + itemsPerPage);
 
-  const handleSearch = () => {
+  const handleSearch = useCallback(() => {
     setCurrentPage(0); // Reset to first page
-  };
+  }, []);
 
   useEffect(()=>{
     console.log(loading)
