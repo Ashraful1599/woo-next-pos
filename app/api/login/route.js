@@ -7,9 +7,9 @@ import config from '@/lib/config';
 function createSecureCookie(name, value, isProduction) {
   return cookie.serialize(name, value, {
     path: '/',
-    httpOnly: false, // For security: prevents JavaScript access to the cookie
+    httpOnly: true, // For security: prevents JavaScript access to the cookie
     secure: true, // Only send over HTTPS in production
-    sameSite: 'None', // Use 'None' for cross-origin requests, 'Lax' for same-origin
+    sameSite: 'Lax', // Use 'None' for cross-origin requests, 'Lax' for same-origin
   });
 }
 
