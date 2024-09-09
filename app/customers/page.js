@@ -9,18 +9,18 @@ import Cart from "@/components/Cart";
 import Loading from "@/components/Loading";
 import { fetchCustomers } from '@/lib/slices/customersSlice';
 import ReactPaginate from 'react-paginate';
-
+import { setCustomers } from '@/lib/slices/customersSlice'
 
 export default function CustomerPage() {
   const { loading, progress, message } = useSelector((state) => state.loading);
-  const [customers, setCustomers] = useState([]);
-  const { customers: items } = useSelector((state) => state.customers);
+  //const [customers, setCustomers] = useState([]);
+  const  customers  = useSelector((state) => state.customers.customers);
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 10; // Define the number of items per page
 
-  useEffect(() => {
-    setCustomers(items);
-  }, [items]);
+  // useEffect(() => {
+  //   setCustomers(items);
+  // }, [items]);
 
 
   const dispatch = useDispatch()
@@ -44,10 +44,10 @@ export default function CustomerPage() {
 <div>
       <Header 
                searchField={true}
-               products={customers}
-               setProducts={setCustomers}
+               items={customers}
+               setItems={setCustomers}
                onSearch={handleSearch} // Pass the function to handle search
-               searchCustomers={true}
+               searchType='customer'
       />
       <main>
         <div className="flex">
@@ -55,12 +55,12 @@ export default function CustomerPage() {
           <div className="w-full mx-auto px-2">
             <div className="page_content">
               <div className="grid grid-cols-7 gap-2">
-                {loading && (
+                {/* {loading && (
                   <Loading
                     message={message}
                     progress={progress}
                   />
-                )}
+                )} */}
                 <div className='bg-white p-4 rounded shadow-lg col-span-5 products_list_wrap'>
 
                 <CustomerSelection customers={currentPageItems} />

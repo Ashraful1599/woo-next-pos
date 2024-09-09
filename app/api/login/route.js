@@ -1,53 +1,40 @@
-import cookie from "cookie";
+import axios from 'axios';
+import { NextResponse } from 'next/server';
+import cookie from 'cookie';
+import config from '@/lib/config';
 
-export async function POST(req, res) {
-  try {
+export async function POST(req) {
+ 
     const { username, password } = await req.json();
 
-    if (username === "test" && password === "12345") {
-      const token = "dummy-token"; // Replace this with your token generation logic
-      const headers = {
-        "Set-Cookie": cookie.serialize("authToken", token, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV !== "development",
-          maxAge: 60 * 60 * 24, // 1 day
-          sameSite: "strict",
-          path: "/",
-        }),
-        "Content-Type": "application/json",
-      };
-      const data  = {
-          user_id: 123,
-          user_name: "John Doe",
-          user_email: "john.doe@example.com",
-          outlet_id: "2",
-          outlet_name: "Nutrizone 2"
-      };
+    const response = await axios.post(`${config.apiBaseUrl}/login`, {
+      log: username,
+      pwd: password
+    });
 
+    // Extract cookies from the response headers
+    const cookies = response.headers['set-cookie'];
 
-      return new Response(JSON.stringify({ success: true, token, ...data }), {
-        status: 200,
-        headers,
+    if (cookies) {
+      const parsedCookies = cookies.map((cookieStr) => {
+        const parsed = cookie.parse(cookieStr);
+        return cookie.serialize(Object.keys(parsed)[0], Object.values(parsed)[0], {
+          path: '/',
+          httpOnly: true, // Secure flag should be false in localhost
+          sameSite: 'Lax', // SameSite should be lax or strict without Secure
+        });
       });
+
+      // Attach the cookies to the response
+      const res = NextResponse.json( response.data );
+
+      parsedCookies.forEach((parsedCookie) => {
+        res.headers.append('Set-Cookie', parsedCookie);
+      });
+
+      return res;
     }
 
-    return new Response(
-      JSON.stringify({
-        success: false,
-        message: "Username or password is incorrect!",
-      }),
-      {
-        status: 401,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
-  } catch (error) {
-    return new Response(
-      JSON.stringify({ success: false, message: "Invalid request body" }),
-      {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
-  }
+  return  NextResponse.json( response.data );
+
 }

@@ -122,16 +122,16 @@ const POSInput = ({ totalAmount }) => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-lg" onKeyDown={handleKeyPress} tabIndex="0">
+    <div className="bg-white p-4 rounded-lg shadow-lg" onKeyDown={handleKeyPress} tabIndex="0">
       <div className="flex mb-4">
         <button
-          className={`flex-1 py-2 ${activeTab === 'Card Payments' ? 'bg-orange-500 text-white' : 'bg-gray-200 text-black'}`}
+          className={`flex-1 py-2 ${activeTab === 'Card Payments' ? 'bg-teal-500 hover:bg-teal-600 disabled:bg-indigo-300 text-white' : 'bg-gray-300 text-gray-700 hover:bg-gray-400'}`}
           onClick={() => handleTabClick('Card Payments')}
         >
           Card Payments
         </button>
         <button
-          className={`flex-1 py-2 ${activeTab === 'Cash Payment' ? 'bg-orange-500 text-white' : 'bg-gray-200 text-black'}`}
+          className={`flex-1 py-2 ${activeTab === 'Cash Payment' ? 'bg-teal-500 hover:bg-teal-600 disabled:bg-indigo-300 text-white' : 'bg-gray-300 text-gray-700 hover:bg-gray-400'}`}
           onClick={() => handleTabClick('Cash Payment')}
         >
           Cash Payment

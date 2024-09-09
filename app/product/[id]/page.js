@@ -3,13 +3,13 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const ProductDetails = ({params}) => {
-  //  console.log(params);
+  //  // console.log(params);
     var productId = params.id;
   const [product, setProduct] = useState(null);
   const [selectedVariation, setSelectedVariation] = useState(null);
   const [selectedOptions, setSelectedOptions] = useState({});
 
- // console.log(product);
+ // // console.log(product);
 
 
   useEffect(() => {
@@ -38,10 +38,10 @@ const ProductDetails = ({params}) => {
 
     setSelectedVariation(selectedVar || null);
 
-   // console.log(selectedVariation);
-    console.log(selectedVariation?.attributes?.length);
-   // console.log(Object.keys(selectedVariation).attributes.length);
-    console.log(Object.keys(selectedOptions)?.length);
+   // // console.log(selectedVariation);
+    // console.log(selectedVariation?.attributes?.length);
+   // // console.log(Object.keys(selectedVariation).attributes.length);
+    // console.log(Object.keys(selectedOptions)?.length);
 
 
 

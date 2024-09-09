@@ -32,9 +32,9 @@ const ProductDetails = () => {
   }, [productId]);
 
 
-  console.log(product);
+  // console.log(product);
   const handleVariationChange = (variationId) => {
-    console.log(variationId);
+    // console.log(variationId);
     const variation = product.variations.find(prod => prod.id === variationId);
     setSelectedVariation(variation);
   };

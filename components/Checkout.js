@@ -2,161 +2,65 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   removeFromCart,
-  setDiscount,
-  setDiscountType,
-  clearCart,
+  setSubTotal,
+  setTaxAmounts,
   updateCartItem,
-  addItemToCart,
   calculateTotalPrice,
-  fetchCartItems  
+  fetchCartItems,
+  calculateLoyaltyPoints  
 } from "@/lib/slices/cartSlice";
 import { fetchTaxes } from "@/lib/slices/taxSlice";
-import axios from "axios";
-import config from "@/lib/config";
-import Avatar from "./cart/Avatar";
+import { tenderedHandle } from "@/lib/slices/checkoutSlice";
 import {
-  FaCartPlus,
-  FaPlus,
-  FaPlusCircle,
-  FaTrash,
-  FaBarcode,
   FaTimesCircle,
+  FaAngleLeft,
 } from "react-icons/fa";
-import Link from "next/link";
-import ToggleSwitch from "./elements/ToggleSwitch";
+import { useRouter } from "next/navigation";
 
-
-const Checkout = ({ placeOrder, customer }) => {
+const Checkout = ({ placeOrder, customer, handleCheckout }) => {
   const dispatch = useDispatch();
-
+  const router = useRouter();
   const cartItems = useSelector((state) => state.cart.items);
   const discountType = useSelector((state) => state.cart.discountType);
   const totalAmount  = useSelector((state) => state.cart.totalAmount );
+  const totalAmountWithLoyalty  = useSelector((state) => state.cart.totalAmountWithLoyalty );
+  const taxAmounts = useSelector((state) => state.cart.taxAmounts);
   const discount = useSelector((state) => state.cart.discount);
   const taxRates = useSelector((state) => state.taxes?.rates);
-  const { change, cashPayment, cardPayment, tendered } = useSelector((state)=>state.checkout) 
-  const selectedCustomer = useSelector(
-    (state) => state.customers?.selectedCustomer
-  );
+  const { change, cashPayment, cardPayment, loyaltyPayment, tendered } = useSelector((state)=>state.checkout) 
+  const loading = useSelector((state)=>state.loading.loading)
 
-  const [discountAmount, setDiscountAmount] = useState(0);
-  const [appliedDiscount, setAppliedDiscount] = useState(0);
-  const [loyaltyPoints, setLoyaltyPoints] = useState(0);
-  const [taxAmounts, setTaxAmounts] = useState([]);
+ // const [taxAmounts, setTaxAmounts] = useState([]);
+  const subTotal = useSelector((state) => state.cart.subTotal);
 
-  const [productName, setProductName] = useState('');
-  const [productPrice, setProductPrice] = useState('');
+
+  useEffect(()=>{
+    dispatch(tenderedHandle());
+  },[cashPayment, cardPayment, dispatch])
 
   useEffect(() => {
     dispatch(fetchCartItems());
     dispatch(fetchTaxes());
   }, [dispatch]);
 
-  useEffect(() => {
-    const calculateLoyaltyPoints = (items) => {
-      let totalLoyaltyPoints = 0;
-      items.forEach((item) => {
-        const loyaltyCategory = item.categories?.find(
-          (category) => category.slug === "loyalty3"
-        );
-        if (loyaltyCategory) {
-          totalLoyaltyPoints += Number(item.price) * 0.03 * item.quantity;
-        }
-      });
-      return totalLoyaltyPoints;
-    };
-    const points = calculateLoyaltyPoints(cartItems);
-    setLoyaltyPoints(points);
-  }, [cartItems]);
 
-  const handleApplyDiscount = (discountType) => {
-    setAppliedDiscount(discountAmount);
-    dispatch(setDiscount(discountAmount));
-    dispatch(setDiscountType(discountType));
-  };
+  // useEffect(() => {
+  //   dispatch(calculateLoyaltyPoints(cartItems));
+  // }, [cartItems]);
+
+
 
   const handleRemoveFromCart = (id) => {
     dispatch(removeFromCart(id));
   };
 
-  // const calculateSubTotalPrice = () => {
-  //   return cartItems.reduce(
-  //     (sum, item) => sum + Number(item.price) * item.quantity,
-  //     0
-  //   );
-  // };
-
-  const calculateSubTotalPrice = useCallback(() => {
-    // Function logic here, for example:
-    return cartItems.reduce(
-      (sum, item) => sum + Number(item.price) * item.quantity,
-      0
-    );
-  }, [cartItems]);
-
-
-  // const calculateTaxAmounts = () => {
-  //   const subTotalPrice = calculateSubTotalPrice();
-  //   const calculatedTaxAmounts = taxRates.map((tax) => ({
-  //     ...tax,
-  //     amount: ((subTotalPrice * tax.rate) / 100).toFixed(2),
-  //   }));
-  //   setTaxAmounts(calculatedTaxAmounts);
-  // };
-  const calculateTaxAmounts = useCallback(() => {
-    const subTotalPrice = calculateSubTotalPrice();
-    const calculatedTaxAmounts = taxRates.map((tax) => ({
-      ...tax,
-      amount: ((subTotalPrice * tax.rate) / 100).toFixed(2),
-    }));
-    setTaxAmounts(calculatedTaxAmounts);
-  }, [calculateSubTotalPrice, taxRates]);
-
-
   useEffect(() => {
-    if (taxRates && taxRates.length > 0) {
-      calculateTaxAmounts();
-    }
-  }, [taxRates, cartItems, calculateTaxAmounts]);
+      dispatch(setSubTotal());
+      dispatch(calculateLoyaltyPoints());
+      dispatch(setTaxAmounts(taxRates));
+      dispatch(calculateTotalPrice());
+   }, [taxRates, cartItems, discountType, dispatch]);
 
-
-
-
-  useEffect(() => {
-    const subTotalPrice = calculateSubTotalPrice();
-    dispatch(calculateTotalPrice({ subTotalPrice, taxAmounts }));
-  }, [cartItems, taxAmounts, dispatch, calculateSubTotalPrice]);
-
-
-
-  const handleCheckout = async () => {
-    const order = {
-      customer_id: customer,
-      line_items: cartItems.map((item) => ({
-        product_id: item.id,
-        quantity: item.quantity,
-      })),
-      discount_total: discount,
-      meta_data: [{ key: "loyalty_points", value: loyaltyPoints }],
-    };
-
-    try {
-      const response = await axios.post(`${config.apiBaseUrl}/orders`, order, {
-        auth: config.auth,
-      });
-      alert("Order placed successfully");
-      handleClearCart();
-      setDiscount(0);
-      setLoyaltyPoints(0);
-    } catch (error) {
-      console.error("Error placing order:", error);
-      alert("Failed to place order, please try again");
-    }
-  };
-
-  const handleClearCart = () => {
-    dispatch(clearCart());
-  };
 
   const [toggledItemId, setToggledItemId] = useState(null);
 
@@ -171,43 +75,41 @@ const Checkout = ({ placeOrder, customer }) => {
     }
   };
 
-  const handleAddNewProduct = () => {
-    if (productName && productPrice) {
-      dispatch(addItemToCart({ id: Date.now().toString(36), name: productName, price: Number(productPrice) }));
-      togglePopup();
-      setProductName('');
-      setProductPrice('');
-    }
+  const handleBack = () => {
+    router.back();
   };
-
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-
-  const togglePopup = () => {
-    setIsPopupOpen(!isPopupOpen);
-  };
+ 
 
   return (
-    <div className="bg-white p-4 rounded shadow-lg col-span-2 flex flex-col ">
+    <div className="bg-white p-4 rounded shadow-lg col-span-2 flex flex-col checkout_item_wrap">
 
-      <ul className="mt-4 border-t pt-4 cart_items flex flex-col flex-1 overflow-y-auto gap-2">
+    <button
+      className="flex items-center text-md bg-teal-500 hover:bg-teal-600 text-white p-1 rounded-md w-24 justify-center"
+      onClick={handleBack}
+    >
+      <FaAngleLeft /> Back
+    </button>
+
+      <ul className="mt-4 border-t pt-4 cart_items flex flex-col flex-1 overflow-y-auto gap-2 flex-grow">
         {cartItems.map((item) => (
           <li
             key={`${item.id}-${item.variantOptions || ""}`}
             className="relative"
           >
             <div
-              className="flex justify-between items-center cart_item_name"
+              className="flex justify-between items-center cart_item_name gap-3"
               onClick={() => handleToggleItem(item.id)}
               aria-expanded={toggledItemId === item.id}
             >
               <span>
-                {item.name} - ${Number(item.price).toFixed(2)} (x{item.quantity})
+                {item.title} - ${Number(item.sale_price).toFixed(2)} (x{item.quantity})
                 {item.variantOptions && (
                   <div className="text-sm text-gray-500 variantoptions">
                     {item.variantOptions}
                   </div>
                 )}
               </span>
+              <span className="mr-6">${Number(item.sale_price*item.quantity).toFixed(2)}</span>
               <button
                 className="text-lg cart_item_remove"
                 onClick={(e) => {
@@ -236,55 +138,66 @@ const Checkout = ({ placeOrder, customer }) => {
                   name="item_price"
                   className="col-span-1"
                   placeholder="Enter price"
-                  defaultValue={item.price}
-                  onKeyDown={(e) => handleKeyDown(e, item, "price")}
+                  defaultValue={item.sale_price}
+                  onKeyDown={(e) => handleKeyDown(e, item, "sale_price")}
                 />
               </div>
             </div>
           </li>
-        ))}
+        ))} 
       </ul>
-      <div className="mt-4 flex-none">
+      <div className="mt-4 flex-none fixedr bottom-0r w-fullr">
         <div className="mt-4 border-t pt-4">
 
 
           <div className="flex justify-between items-center pt-4">
             <span>Sub Total</span>
-            <span>${calculateSubTotalPrice().toFixed(2)}</span>
+            <span>${subTotal.toFixed(2)}</span>
           </div>
           {taxAmounts.map((tax) => (
             <div key={tax.id} className="flex justify-between items-center">
-              <span>{tax.name}</span>
+              <span>{tax.label}</span>
               <span>${tax.amount}</span>
             </div>
           ))}
           <div className="flex justify-between items-center">
             <span>Discount</span>
-            <span>-${discountType == "fixed" ?  parseFloat(discount || 0).toFixed(2) : discount + "%"}</span>
+            <span>-${discountType == "fixed" ?  parseFloat(discount || 0).toFixed(2) : discount}</span>
           </div>
           <div className="flex justify-between items-center font-bold">
             <span>Total</span>
-            <span>${parseFloat(totalAmount || 0).toFixed(2)}</span>
+            <span>${parseFloat(totalAmountWithLoyalty || 0).toFixed(2)}</span>
           </div>
-
+          <div className="flex justify-between items-center font-boldr bg-gray-100r">
+            <span>Pay by Loyalty</span>
+            <span>${parseFloat(loyaltyPayment || 0).toFixed(2)}</span>
+          </div>            
           <div className="flex justify-between items-center font-boldr">
             <span>Pay by cash</span>
-            <span>{parseFloat(cashPayment || 0).toFixed(2)}</span>
+            <span>${parseFloat(cashPayment || 0).toFixed(2)}</span>
           </div>        
           <div className="flex justify-between items-center font-boldr">
             <span>Pay by card</span>
-            <span> {parseFloat(cardPayment || 0).toFixed(2)}</span>
+            <span> ${parseFloat(cardPayment || 0).toFixed(2)}</span>
           </div>
           <div className="flex justify-between items-center font-boldr">
             <span>Tendered</span>
-            <span> {parseFloat(tendered || 0).toFixed(2)}</span>
+            <span> ${parseFloat(tendered || 0).toFixed(2)}</span>
           </div>          
           <div className="flex justify-between items-center font-bold">
             <span>Change</span>
-            <span> {parseFloat(change || 0).toFixed(2)}</span>
+            <span> ${parseFloat(change || 0).toFixed(2)}</span>
           </div>
 
         </div>
+
+        <button
+                    className="w-full py-4 mt-2 bg-indigo-500 hover:bg-indigo-600 disabled:bg-indigo-300 disabled:cursor-not-allowed disabled:text-indigo-100 text-white rounded-md "
+                    onClick={handleCheckout} disabled={cartItems.length == 0 || tendered < totalAmount || loading == true ? 'disabled': ''}
+                  >
+                    Place Order
+        </button>
+
 
       </div>
    

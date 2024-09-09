@@ -1,67 +1,29 @@
-'use client';
+// layout.js
+
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Link from "next/link";
 import Head from "next/head";
+import LayoutClient from "@/components/client/LayoutClient";
 const inter = Inter({ subsets: ["latin"] });
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-import { Provider } from 'react-redux';
-import store from '@/lib/store';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
+export const metadata = {
+  title: "POS Application",
+  description: "Nutrizone POS App",
+};
 
 export default function RootLayout({ children }) {
-  const router = useRouter();
- 
-  // useEffect(() => {
-  //   const token = localStorage.getItem('authToken');
-  //   if (!token) {
-  //     router.push('/login');
-  //   }
-  // }, [router]);
-
-  // useEffect(() => {
-  //   const token = document.cookie.split('; ').find(cookie => cookie.startsWith('authToken='));
-  //   console.log('token');
-  //   console.log(token);
-  //   if (token) {
-  //     router.push('/');
-  //   } else {
-  //     router.push('/login');
-  //   }
-  // }, [router]);
-
-
-
-
-
-
-
   return (
     <html lang="en">
       <Head>
-        <title>Post application</title>
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="alternate icon" href="/favicon.ico" type="image/x-icon" />
       </Head>
-      <body className={inter.className + " overflow-hidden"}>
-        <Provider store={store}>
-          <div id="main" className="min-h-screenr bg-gray-100">
+      <body className={`${inter.className} overflow-hidden bg-gray-50 text-gray-900`}>
+        <LayoutClient>
+          <div id="main" className="min-h-screen">
             {children}
           </div>
-        </Provider>
-        <ToastContainer
-            position="top-center"
-            autoClose={5000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-        
-        />
+        </LayoutClient>
       </body>
     </html>
   );

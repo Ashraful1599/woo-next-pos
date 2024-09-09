@@ -20,7 +20,7 @@ const MyComponent = () => {
           });
           setData(response.data);  // Set the fetched data to state
           setLoading(false);  // Loading done
-          console.log(response.data);
+          // console.log(response.data);
          // return response.data;
       };
   
