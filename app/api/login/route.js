@@ -7,7 +7,7 @@ import config from '@/lib/config';
 function createSecureCookie(name, value, isProduction) {
   return cookie.serialize(name, value, {
     path: '/',
-    httpOnly: true, // For security: prevents JavaScript access to the cookie
+    httpOnly: false, // For security: prevents JavaScript access to the cookie
     secure: true, // Only send over HTTPS in production
     sameSite: 'None', // Use 'None' for cross-origin requests, 'Lax' for same-origin
   });
