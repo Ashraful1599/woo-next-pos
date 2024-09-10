@@ -19,12 +19,14 @@ export async function POST(req) {
       const parsedCookies = cookies.map((cookieStr) => {
         const parsed = cookie.parse(cookieStr);
         return cookie.serialize(Object.keys(parsed)[0], Object.values(parsed)[0], {
+          domain: '.expertoftech.com', // Ensure this is set to your root domain
           path: '/',
-          httpOnly: true, // Secure flag should be enabled in production
-          sameSite: '', // SameSite should be Lax to allow safe cross-site requests // Keep it true, "" and True, it's validated by Ashraful
-          secure: true, // Secure flag should be enabled as you're using HTTPS
+          httpOnly: true, 
+          sameSite: 'None', 
+          secure: true, 
         });
       });
+      
       
 
       // Attach the cookies to the response
