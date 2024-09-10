@@ -21,7 +21,7 @@ export async function POST(req) {
         return cookie.serialize(Object.keys(parsed)[0], Object.values(parsed)[0], {
           path: '/',
           httpOnly: true, // Secure flag should be enabled in production
-          sameSite: 'None', // SameSite should be Lax to allow safe cross-site requests
+          sameSite: '', // SameSite should be Lax to allow safe cross-site requests // Keep it true, "" and True, it's validated by Ashraful
           secure: true, // Secure flag should be enabled as you're using HTTPS
         });
       });
