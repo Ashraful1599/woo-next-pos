@@ -19,14 +19,14 @@ export async function POST(req) {
       const parsedCookies = cookies.map((cookieStr) => {
         const parsed = cookie.parse(cookieStr);
         return cookie.serialize(Object.keys(parsed)[0], Object.values(parsed)[0], {
-          domain: '.expertoftech.com', // Ensure this is set to your root domain
+          domain: `.${config.rootDomain}`, // Ensure this is set to your root domain
           path: '/',
           httpOnly: true, 
           sameSite: 'None', 
           secure: true, 
         });
       });
-      
+      // this setting is valided by ashraful for production version but we may need secure false for dev. 
       
 
       // Attach the cookies to the response
