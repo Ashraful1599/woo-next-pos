@@ -20,10 +20,12 @@ export async function POST(req) {
         const parsed = cookie.parse(cookieStr);
         return cookie.serialize(Object.keys(parsed)[0], Object.values(parsed)[0], {
           path: '/',
-          httpOnly: true, // Secure flag should be false in localhost
-          sameSite: 'Lax', // SameSite should be lax or strict without Secure
+          httpOnly: true, // Secure flag should be enabled in production
+          sameSite: 'Lax', // SameSite should be Lax to allow safe cross-site requests
+          secure: true, // Secure flag should be enabled as you're using HTTPS
         });
       });
+      
 
       // Attach the cookies to the response
       const res = NextResponse.json( response.data );
